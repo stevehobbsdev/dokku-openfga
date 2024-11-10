@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-set -eo pipefail
-
-dokku plugin:install file://$(pwd)/"$PLUGIN_NAME"

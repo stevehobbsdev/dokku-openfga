@@ -3,4 +3,3 @@
 .editorconfig
 support/
 !support/Makefile
-!support/plugin-install
