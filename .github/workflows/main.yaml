@@ -21,3 +21,5 @@ jobs:
         uses: ludeeus/action-shellcheck@master
         with:
           additional_files: "config install"
+          ignore_names: .editorconfig
+          ignore_paths: ./src ./.idea
