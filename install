@@ -4,6 +4,8 @@ set -eo pipefail
 
 cd "$(dirname "$0")"
 
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/config"
+
 # PLUGIN_ENV = dev when testing in local docker image
 if [ "${PLUGIN_ENV}" == "dev" ]; then
   make build clean-src || exit 1
@@ -11,5 +13,8 @@ else
   # Used when the plugin is being installed into a real dokku instance
   make build-in-docker clean-src || exit 1
 fi
+
+# Pull the openfga docker image
+"$DOCKER_BIN" image pull "$OPENFGA_IMAGE"
 
 echo "plugin installed"
