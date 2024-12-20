@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
-export OPENFGA_IMAGE_TAG=${OPENFGA_IMAGE_TAG:="latest"}
-export OPENFGA_IMAGE=${OPENFGA_IMAGE:="openfga/openfga:$OPENFGA_IMAGE_TAG"}
+export OPENFGA_IMAGE_TAG="latest"
+export OPENFGA_IMAGE="openfga/openfga"
 export PLUGIN_DATA_ROOT="$DOKKU_LIB_ROOT/services/openfga"

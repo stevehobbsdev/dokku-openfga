@@ -6,7 +6,10 @@ TRIGGERS=triggers/report
 clean-src:
 	@rm -rf src README.md Makefile support .idea .dockerignore
 
-build: commands subcommands triggers
+build: commands subcommands triggers setup
+
+setup:
+	go build -a -o setup src/setup.go
 
 commands: src/commands/commands.go
 	go build -a -o commands src/commands/commands.go

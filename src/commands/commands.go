@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"openfga/src/internal/config"
 	"os"
 	"strconv"
 
@@ -16,6 +17,12 @@ const (
 var appName = flag.String("app", "", "The app name")
 
 func main() {
+	config.ReadConfig()
+
+	for _, e := range os.Environ() {
+		fmt.Println(e)
+	}
+
 	// Run the root command
 	flag.Usage = usage
 	flag.Parse()

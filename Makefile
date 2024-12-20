@@ -17,7 +17,11 @@ DOCKER_CONTAINER_NAME=dokku-plugin-$(PLUGIN_NAME)
 
 .PHONY: start shell stop run build-image install-plugin test-$(PLUGIN_NAME) test-help test-dokku
 
-start:
+.PHONY: help
+help: ## this help
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z0-9_-]+:.*?## / {gsub("\\\\n",sprintf("\n%22c",""), $$2);printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+
+start: ## start the development docker container
 	@$(DOCKER_BIN) run --rm \
 		-w $(WORK_DIR) \
 		--name $(DOCKER_CONTAINER_NAME) \
@@ -25,11 +29,11 @@ start:
 		-d \
 		$(DEV_IMAGE)
 		
-stop:
+stop: ## stop the development docker container
 	@$(DOCKER_BIN) stop $(DOCKER_CONTAINER_NAME)
 
-# Build the testing image, start the container, and install the plugin
-run: 
+
+run: ## build the testing image, start the container, and install the plugin
 	@$(MAKE) build-image
 	$(DOCKER_BIN) ps -q --filter "name=$(DOCKER_CONTAINER_NAME)" | xargs -r $(DOCKER_BIN) stop
 	@sleep 1
@@ -38,18 +42,16 @@ run:
 	@sleep $(DOKKU_START_WAIT)
 	@$(MAKE) install-plugin
 
-# For development; copy the plugin source to the container and build it
-sync:
+
+sync: ## copy the plugin source to the container and rebuild
 	@docker cp src/ $(DOCKER_CONTAINER_NAME):/var/lib/dokku/plugins/available/$(PLUGIN_NAME)
 	@docker cp support/Makefile $(DOCKER_CONTAINER_NAME):/var/lib/dokku/plugins/available/$(PLUGIN_NAME)
 	@docker exec -it -w $(DOKKU_PLUGIN_PATH) $(DOCKER_CONTAINER_NAME) bash -c "make build clean-src"
 
-# Builds the testing docker image to test the plugin in a Dokku environment
-build-image:
+build-image: ## build the testing docker image to test the plugin in a Dokku environment
 	@$(DOCKER_BIN) build -f support/Dockerfile -t $(DEV_IMAGE) .
 
-# Used by the `install` hook to install the plugin into a dokku instance
-build-in-docker:
+build-in-docker: ## used by the `install` hook to install the plugin into a dokku instance
 	@echo "Building plugin natively.."
 	$(DOCKER_BIN) run --rm \
 		-v $(PWD):$(GO_BUILD_ROOT) \
@@ -58,26 +60,22 @@ build-in-docker:
 		$(GO_BUILD_IMAGE) \
 		bash -c "make build" || exit $?
 	
-# Cleans up the build artifacts
-clean-output:
+clean-output: ## cleans up the build artifacts
 	rm -rf commands subcommands
 
-# Starts a shell in the container for testing
-shell:
+shell: ## start a shell in the container for testing
 	@$(DOCKER_BIN) exec -it -w $(DOKKU_PLUGIN_PATH) $(DOCKER_CONTAINER_NAME) /bin/bash
 
-# Installs the plugin into the running Dokku instance
-install-plugin:
+install-plugin: ## install the plugin into the running Dokku instance
 	@$(DOCKER_EXEC) bash -c "dokku plugin:install file://$(WORK_DIR)/$(PLUGIN_NAME)"
 
-# Various test functions that can be run in the container
-test-$(PLUGIN_NAME):
+test-$(PLUGIN_NAME): ## test the 'dokku openfga' command output
 	@$(DOCKER_EXEC) dokku ${PLUGIN_NAME}
 
-test-$(PLUGIN_NAME)-help:
+test-$(PLUGIN_NAME)-help: ## test the 'dokku openfga:help' command output
 	@$(DOCKER_EXEC) dokku ${PLUGIN_NAME}:help
 
-test-dokku:
+test-dokku: ## test the 'dokku' command output
 	@$(DOCKER_EXEC) dokku
 
 include support/Makefile

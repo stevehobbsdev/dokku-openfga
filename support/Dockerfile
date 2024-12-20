@@ -11,6 +11,10 @@ ENV PLUGIN_NAME=${PLUGIN_NAME}
 ENV DOKKU_PLUGINS_ROOT=/var/lib/dokku/plugins
 ENV PLUGIN_ENV=dev
 
+# Default powerline10k theme, no plugins installed
+RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v1.2.1/zsh-in-docker.sh)"
+
+# Golang
 RUN apt-get update && apt-get install -y make golang-${GO_VERSION}
 
 COPY go.mod /plugins/${PLUGIN_NAME}/go.mod

@@ -2,6 +2,8 @@
 set -eo pipefail
 [[ $DOKKU_TRACE ]] && set -x
 
+echo "[openfga] running installer"
+
 cd "$(dirname "$0")"
 
 source "$(dirname "${BASH_SOURCE[0]}")/config"
@@ -14,15 +16,16 @@ else
   make build-in-docker clean-src || exit 1
 fi
 
-# Pull the openfga docker image
-"$DOCKER_BIN" image pull "$OPENFGA_IMAGE"
+./setup
 
-# Create the plugin data directory if it's not there
-echo "Trying to create $PLUGIN_DATA_ROOT.."
-if [[ ! -d "$PLUGIN_DATA_ROOT" ]]; then
-  echo "Creating $PLUGIN_DATA_ROOT.."
-  mkdir -p "$PLUGIN_DATA_ROOT"
-fi
+# # Pull the openfga docker image
+# "$DOCKER_BIN" image pull "$OPENFGA_IMAGE"
 
+# # Create the plugin data directory if it's not there
+# echo "Trying to create $PLUGIN_DATA_ROOT.."
+# if [[ ! -d "$PLUGIN_DATA_ROOT" ]]; then
+#   echo "Creating $PLUGIN_DATA_ROOT.."
+#   mkdir -p "$PLUGIN_DATA_ROOT"
+# fi
 
 echo "plugin installed"
