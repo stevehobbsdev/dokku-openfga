@@ -4,7 +4,8 @@ set -eo pipefail
 
 cd "$(dirname "$0")"
 
-source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/config"
+export OPENFGA_IMAGE_TAG=${OPENFGA_IMAGE_TAG:="latest"}
+export OPENFGA_IMAGE=${OPENFGA_IMAGE:="openfga/openfga:$OPENFGA_IMAGE_TAG"}
 
 # PLUGIN_ENV = dev when testing in local docker image
 if [ "${PLUGIN_ENV}" == "dev" ]; then

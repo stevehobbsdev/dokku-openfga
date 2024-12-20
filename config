@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-set -eo pipefail
-[[ $DOKKU_TRACE ]] && set -x
-
-_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export OPENFGA_IMAGE_TAG=${OPENFGA_IMAGE_TAG:="latest"}
-export OPENFGA_IMAGE=${OPENFGA_IMAGE:="openfga/openfga:$OPENFGA_IMAGE_TAG"}
