@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"openfga/src/internal/config"
+	"openfga/src/internal/log"
 	"os"
 	"strconv"
 
@@ -17,7 +18,10 @@ const (
 var appName = flag.String("app", "", "The app name")
 
 func main() {
-	config.ReadConfig()
+	err := config.ReadConfig()
+	if err != nil {
+		log.Info("could not read config: %+v", err)
+	}
 
 	for _, e := range os.Environ() {
 		fmt.Println(e)
